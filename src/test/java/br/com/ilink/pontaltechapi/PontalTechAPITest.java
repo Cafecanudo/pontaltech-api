@@ -53,8 +53,11 @@ public class PontalTechAPITest {
         .codigoInterno("98486168")
         .build();
 
-    PontalTechAPI.prepare(req,
-        SMSUserConfig.build("USUARIO", "SENHA")).envia();
+    PontalTechAPI.config(
+          SMSUserConfig.build("USUARIO", "SENHA")
+        )
+        .prepare(req)
+        .envia();
   }
 
   @Test
@@ -80,7 +83,7 @@ public class PontalTechAPITest {
         .codigoInterno("98486168")
         .build();
 
-    List<SMSResponse> resp = PontalTechAPI.prepare(req).envia();
+    List<SMSResponse> resp = PontalTechAPI.preparar(req).envia();
 
     assertThat(resp, is(notNullValue()));
     assertThat(resp, not(IsEmptyCollection.empty()));
@@ -93,7 +96,7 @@ public class PontalTechAPITest {
     req.addPara("62996020305");
     req.setCodigoInterno("AAAA");
 
-    List<SMSResponse> resp = PontalTechAPI.prepare(req).envia();
+    List<SMSResponse> resp = PontalTechAPI.preparar(req).envia();
     assertThat(resp, is(notNullValue()));
     assertThat(resp, not(IsEmptyCollection.empty()));
     assertThat(resp, is(hasSize(1)));

@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.ilink</groupId>
   <artifactId>pontaltech-api</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <name>pontaltech-api</name>
 

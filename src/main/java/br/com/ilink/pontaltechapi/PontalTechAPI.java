@@ -12,12 +12,26 @@ import java.util.stream.Collectors;
 
 public class PontalTechAPI {
 
-  public static EnviarSMS prepare(SMSRequest req) {
+  public static Config config(SMSUserConfig smsUserConfig) {
+    return new PontalTechAPI.Config(smsUserConfig);
+  }
+
+  public static EnviarSMS preparar(SMSRequest req) {
     return new PontalTechAPI.EnviarSMS(req);
   }
 
-  public static EnviarSMS prepare(SMSRequest req, SMSUserConfig smsUserConfig) {
-    return new PontalTechAPI.EnviarSMS(req, smsUserConfig);
+  public static class Config {
+
+    private SMSUserConfig smsUserConfig;
+
+    public Config(SMSUserConfig smsUserConfig) {
+      this.smsUserConfig = smsUserConfig;
+    }
+
+    public EnviarSMS prepare(SMSRequest req) {
+      return new PontalTechAPI.EnviarSMS(req, smsUserConfig);
+    }
+
   }
 
   /**
@@ -53,7 +67,8 @@ public class PontalTechAPI {
               .urlCallback(req.getUrlCallback())
               .flashSms(req.isSmsUrgente())
               .build())
-          .map(this::processar).collect(Collectors.toList());
+          .map(this::processar)
+          .collect(Collectors.toList());
     }
 
     private SMSResponse processar(SingleSMS sms) {
