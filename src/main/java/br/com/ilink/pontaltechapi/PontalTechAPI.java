@@ -3,9 +3,12 @@ package br.com.ilink.pontaltechapi;
 import br.com.ilink.pontaltechapi.exceptions.ProcessorException;
 import br.com.ilink.pontaltechapi.exceptions.ValidationException;
 import br.com.ilink.pontaltechapi.models.SMSRequest;
+import br.com.ilink.pontaltechapi.models.SMSRequestCheck;
 import br.com.ilink.pontaltechapi.models.SMSResponse;
+import br.com.ilink.pontaltechapi.models.SMSResponseCheck;
 import br.com.ilink.pontaltechapi.models.SMSUserConfig;
 import br.com.ilink.pontaltechapi.models.SingleSMS;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +23,10 @@ public class PontalTechAPI {
     return new PontalTechAPI.EnviarSMS(req);
   }
 
+  public static CheckSMS preparar(SMSRequestCheck req) {
+    return new PontalTechAPI.CheckSMS(req);
+  }
+
   public static class Config {
 
     private SMSUserConfig smsUserConfig;
@@ -32,6 +39,33 @@ public class PontalTechAPI {
       return new PontalTechAPI.EnviarSMS(req, smsUserConfig);
     }
 
+  }
+
+  /**
+   * Classe para checar SMS
+   */
+  public static class CheckSMS {
+
+    private SMSRequestCheck req;
+    private SMSUserConfig smsUserConfig;
+
+    public CheckSMS(SMSRequestCheck req) {
+      this.req = req;
+    }
+
+    public CheckSMS(SMSRequestCheck req, SMSUserConfig smsUserConfig) {
+      this.req = req;
+      this.smsUserConfig = smsUserConfig;
+    }
+
+    public List<SMSResponse> check() throws IOException {
+      String json = HttpClient
+          .POST(RestService.CheckSMS, ConverterUtil.toJsonString(req), smsUserConfig);
+
+      TypeReference listType = new TypeReference<List<SMSResponseCheck>>() {
+      };
+      return ConverterUtil.toObject(json, SMSResponseCheck.class).getReports();
+    }
   }
 
   /**

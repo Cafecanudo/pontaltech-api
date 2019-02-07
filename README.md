@@ -39,10 +39,15 @@ Configurações
     List<SMSResponse> resps = PontalTechAPI.preparar(requisicao).enviar();
     //Retorna uma lista dos SMSs enviados para cada numero adicionado
 
-  Verificando status de Envio
+  Verificando status de Envio. *(Somente por período)*
       
-      SMSResponseCheckProtocolo resp =
-              PontalTechAPI.preparar("Numero gerado").check();
+      SMSRequestCheck requestCheck = SMSRequestCheck.builder()
+              .dataInicio(LocalDateTime.now().minusMinutes(5))
+              .dataFim(LocalDateTime.now())
+              .build();
+              
+      List<SMSResponse> reports = PontalTechAPI.preparar(requestCheck)
+              .check();        
     
   Espeficicando usuário e senha
   

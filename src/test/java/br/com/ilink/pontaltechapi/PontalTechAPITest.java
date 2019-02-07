@@ -13,9 +13,12 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import br.com.ilink.pontaltechapi.exceptions.UnauthorizedException;
 import br.com.ilink.pontaltechapi.models.SMSRequest;
+import br.com.ilink.pontaltechapi.models.SMSRequestCheck;
 import br.com.ilink.pontaltechapi.models.SMSResponse;
 import br.com.ilink.pontaltechapi.models.SMSResponseError;
 import br.com.ilink.pontaltechapi.models.SMSUserConfig;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Before;
@@ -106,6 +109,20 @@ public class PontalTechAPITest {
         .code(105)
         .message("Empty message")
         .build()));
+  }
+
+  @Test
+  public void testConsultaProtocolo() throws IOException {
+    SMSRequestCheck requestCheck = SMSRequestCheck.builder()
+        .dataInicio(LocalDateTime.now().minusMinutes(5))
+        .dataFim(LocalDateTime.now())
+        .build();
+
+    List<SMSResponse> reports = PontalTechAPI.preparar(requestCheck)
+        .check();
+
+    assertThat(reports, is(notNullValue()));
+    assertThat(reports, not(IsEmptyCollection.empty()));
   }
 
 }

@@ -19,11 +19,12 @@ public class SMSResponse {
   private String message;
   @JsonDeserialize(using = ZonedDateTimeDeserializerToLocalDateTime.class)
   private LocalDateTime schedule;
+  @JsonDeserialize(using = ZonedDateTimeDeserializerToLocalDateTime.class)
   private LocalDateTime sent;
   private String reference;
   private Integer account;
   private String from;
-  private Integer status;
+  private String status;
   private String statusDescription;
   private SMSResponseError error;
 
