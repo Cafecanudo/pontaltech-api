@@ -12,9 +12,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import br.com.ilink.pontaltechapi.exceptions.UnauthorizedException;
-import br.com.ilink.pontaltechapi.models.SMSRequest;
 import br.com.ilink.pontaltechapi.models.SMSRequestCheck;
-import br.com.ilink.pontaltechapi.models.SMSResponse;
 import br.com.ilink.pontaltechapi.models.SMSResponseError;
 import br.com.ilink.pontaltechapi.models.SMSUserConfig;
 import java.io.IOException;
@@ -49,7 +47,7 @@ public class PontalTechAPITest {
     expectedException.expect(UnauthorizedException.class);
     expectedException.expectMessage("{\"code\":99,\"message\":\"Unauthorized\"}");
 
-    SMSRequest req = SMSRequest.builder()
+    PontalTechAPI.SMSRequest req = PontalTechAPI.SMSRequest.builder()
         .para("62996020305")
         .para("62996020309")
         .mensagem("Mensagem de teste PontalTech")
@@ -57,10 +55,10 @@ public class PontalTechAPITest {
         .build();
 
     PontalTechAPI.config(
-          SMSUserConfig.build("USUARIO", "SENHA")
-        )
+        SMSUserConfig.build("USUARIO", "SENHA")
+    )
         .prepare(req)
-        .envia();
+        .enviar();
   }
 
   @Test
@@ -79,14 +77,14 @@ public class PontalTechAPITest {
                 + "}"
         );
 
-    SMSRequest req = SMSRequest.builder()
+    PontalTechAPI.SMSRequest req = PontalTechAPI.SMSRequest.builder()
         .para("62996020305")
         .para("62996020309")
         .mensagem("Mensagem de teste PontalTech")
         .codigoInterno("98486168")
         .build();
 
-    List<SMSResponse> resp = PontalTechAPI.preparar(req).envia();
+    List<PontalTechAPI.SMSResponse> resp = PontalTechAPI.preparar(req).enviar();
 
     assertThat(resp, is(notNullValue()));
     assertThat(resp, not(IsEmptyCollection.empty()));
@@ -95,15 +93,15 @@ public class PontalTechAPITest {
 
   @Test
   public void testErro400() {
-    SMSRequest req = new SMSRequest();
+    PontalTechAPI.SMSRequest req = new PontalTechAPI.SMSRequest();
     req.addPara("62996020305");
     req.setCodigoInterno("AAAA");
 
-    List<SMSResponse> resp = PontalTechAPI.preparar(req).envia();
+    List<PontalTechAPI.SMSResponse> resp = PontalTechAPI.preparar(req).enviar();
     assertThat(resp, is(notNullValue()));
     assertThat(resp, not(IsEmptyCollection.empty()));
     assertThat(resp, is(hasSize(1)));
-    assertThat(resp.get(0).getStatus(), is(7));
+    assertThat(resp.get(0).getStatus(), is("7"));
     assertThat(resp.get(0).getStatusDescription(), is("Blocked"));
     assertThat(resp.get(0).getError(), is(SMSResponseError.builder()
         .code(105)
@@ -118,7 +116,7 @@ public class PontalTechAPITest {
         .dataFim(LocalDateTime.now())
         .build();
 
-    List<SMSResponse> reports = PontalTechAPI.preparar(requestCheck)
+    List<PontalTechAPI.SMSResponse> reports = PontalTechAPI.preparar(requestCheck)
         .check();
 
     assertThat(reports, is(notNullValue()));

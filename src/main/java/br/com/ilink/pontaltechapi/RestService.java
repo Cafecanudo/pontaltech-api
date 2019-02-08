@@ -3,7 +3,8 @@ package br.com.ilink.pontaltechapi;
 public enum RestService {
 
   SendUniqueSMS("/single-sms"),
-  CheckSMS("/sms-report");
+  CheckSMS("/sms-report"),
+  MultipleSmsReport("/multiple-sms-report");
 
   public String path;
 

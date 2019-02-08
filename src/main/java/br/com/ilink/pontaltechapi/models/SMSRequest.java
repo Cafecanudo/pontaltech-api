@@ -1,6 +1,7 @@
 package br.com.ilink.pontaltechapi.models;
 
 import br.com.ilink.pontaltechapi.BuilderValidation;
+import br.com.ilink.pontaltechapi.PontalTechAPI;
 import br.com.ilink.pontaltechapi.annotations.DefaultBooleanIfNULL;
 import br.com.ilink.pontaltechapi.annotations.ListNotBlank;
 import br.com.ilink.pontaltechapi.annotations.ListOnlyNumber;
@@ -9,16 +10,18 @@ import br.com.ilink.pontaltechapi.annotations.Size;
 import br.com.ilink.pontaltechapi.annotations.SizeEachList;
 import br.com.ilink.pontaltechapi.annotations.SizeList;
 import br.com.ilink.pontaltechapi.exceptions.ValidationException;
-import br.com.ilink.pontaltechapi.models.converters.LocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @Builder
@@ -40,6 +43,7 @@ public class SMSRequest {
   /**
    * Hora de agendamento (UTC)
    */
+  @Setter(AccessLevel.NONE)
   private LocalDateTime agendado;
 
   /**
@@ -75,7 +79,7 @@ public class SMSRequest {
    * Caso queira que a mensagem seja enviada no estilo FlashSMS
    */
   @DefaultBooleanIfNULL
-  private boolean smsUrgente;
+  private Boolean smsUrgente;
 
   public SMSRequest addPara(String phone) {
     if (phone != null) {
@@ -84,29 +88,43 @@ public class SMSRequest {
     return this;
   }
 
-  public static class SMSRequestBuilder extends BuilderValidation<SMSRequest> {
+  public void agendado(LocalDateTime agendado) {
+    this.agendado = agendado;
+  }
+
+  public static class SMSRequestBuilder extends BuilderValidation<PontalTechAPI.SMSRequest> {
 
     private Set<String> para = new HashSet<>();
 
-    public SMSRequest.SMSRequestBuilder para(Set<String> phone) {
+    public PontalTechAPI.SMSRequest.SMSRequestBuilder para(Set<String> phone) {
       if (phone != null && !phone.isEmpty()) {
         this.para.addAll(phone);
       }
       return this;
     }
 
-    public SMSRequest.SMSRequestBuilder para(String phone) {
+    public PontalTechAPI.SMSRequest.SMSRequestBuilder para(String phone) {
       if (phone != null) {
         this.para.add(phone);
       }
       return this;
     }
 
+    public PontalTechAPI.SMSRequest.SMSRequestBuilder agendado(LocalDateTime agendado) {
+      this.agendado = agendado;
+      return this;
+    }
+
+    public PontalTechAPI.SMSRequest.SMSRequestBuilder agendado(Date agendado) {
+      this.agendado = agendado.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+      return this;
+    }
+
     @Override
-    public SMSRequest build() throws ValidationException {
+    public PontalTechAPI.SMSRequest build() throws ValidationException {
       return validarParametros(
-          new SMSRequest(this.para, this.mensagem, this.agendado, this.codigoInterno, this.de,
-              this.contaId, this.referenciaConta, this.urlCallback, this.smsUrgente)
+          new PontalTechAPI.SMSRequest(this.para, this.mensagem, this.agendado, this.codigoInterno,
+              this.de, this.contaId, this.referenciaConta, this.urlCallback, this.smsUrgente)
       );
     }
   }

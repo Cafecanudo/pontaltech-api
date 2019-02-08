@@ -9,7 +9,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import okhttp3.OkHttpClient;
 
-abstract class TrustConnection {
+public abstract class TrustConnection {
 
   private static final SSLContext trustAllSslContext;
   private static final TrustManager[] trustAllCerts;

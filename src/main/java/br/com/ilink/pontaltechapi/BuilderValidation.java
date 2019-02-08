@@ -13,19 +13,28 @@ import br.com.ilink.pontaltechapi.exceptions.ValidationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BuilderValidation<M> {
 
   public abstract M build() throws ValidationException;
 
   protected final M validarParametros(M bean) throws ValidationException {
-    Arrays.stream(bean.getClass().getDeclaredFields())
-        .forEach(field -> Arrays.stream(field.getAnnotations()).forEach(annotation -> {
-          validar(bean, getValue(bean, field.getName()), field, annotation);
-        }));
+    List<Field> list = new ArrayList<>();
+    list.addAll(Arrays.stream(bean.getClass().getDeclaredFields())
+        .collect(Collectors.toList()));
+    list.addAll(Arrays.stream(bean.getClass().getSuperclass().getDeclaredFields())
+        .collect(Collectors.toList()));
+
+    list.stream().forEach(field -> Arrays.stream(field.getAnnotations()).forEach(annotation -> {
+      validar(bean, getValue(bean, field.getName()), field, annotation);
+    }));
     return bean;
   }
 
@@ -170,8 +179,17 @@ public abstract class BuilderValidation<M> {
   }
 
   private Field getField(M bean, String fieldName) throws NoSuchFieldException {
-    Field field = bean.getClass().getDeclaredField(fieldName);
-    field.setAccessible(true);
-    return field;
+    List<Field> list = new ArrayList<>();
+    list.addAll(Arrays.stream(bean.getClass().getDeclaredFields()).collect(Collectors.toList()));
+    list.addAll(Arrays.stream(bean.getClass().getSuperclass().getDeclaredFields())
+        .collect(Collectors.toList()));
+
+    Optional<Field> field = list.stream()
+        .filter(f -> f.getName().equals(fieldName)).findFirst();
+    if (field.isPresent()) {
+      field.get().setAccessible(true);
+      return field.get();
+    }
+    throw new NoSuchFieldException(String.format("Não foi encontrado o metodo \"%s\"", fieldName));
   }
 }

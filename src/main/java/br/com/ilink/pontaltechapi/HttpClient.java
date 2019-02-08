@@ -21,7 +21,7 @@ public class HttpClient extends TrustConnection {
   static {
     try {
       prop = new Properties();
-      prop.load(HttpClient.class.getResourceAsStream("/config.properties"));
+      prop.load(HttpClient.class.getResourceAsStream("/pontaltech-config.properties"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -42,7 +42,7 @@ public class HttpClient extends TrustConnection {
     RequestBody body = RequestBody.create(JSON, value);
 
     Request request = new Request.Builder()
-        .url(prop.getProperty("config.url") + restService.path)
+        .url(prop.getProperty("config.pontaltech.url") + restService.path)
         .post(body)
         .build();
     try (Response response = client.newCall(request).execute()) {
@@ -64,8 +64,8 @@ public class HttpClient extends TrustConnection {
         Base64.encodeBase64String(
             String.format("%s:%s",
                 ((smsUserConfig != null && smsUserConfig.getUsuario() != null) ? smsUserConfig
-                    .getUsuario() : prop.getProperty("config.user")),
+                    .getUsuario() : prop.getProperty("config.pontaltech.user")),
                 ((smsUserConfig != null && smsUserConfig.getUsuario() != null) ? smsUserConfig
-                    .getUsuario() : prop.getProperty("config.password"))).getBytes()));
+                    .getUsuario() : prop.getProperty("config.pontaltech.password"))).getBytes()));
   }
 }

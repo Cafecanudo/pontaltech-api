@@ -26,36 +26,38 @@ Configurações
   Criando resquisição
     
     //Sem DDD
-    SMSRequest requisicao = SMSRequest.builder()
-        .parar("6296521489")
-        .parar("6296521482")
-        .parar("6296521483")
+    PontalTechAPI.SMSRequest requisicao = PontalTechAPI.SMSRequest.builder()
+        .para("6296521489")
+        .para("6296521482")
+        .para("6296521483")
         .mensagem("Mensagem")
         .codigoInterno("3245234")    //Id interno da Callink
         .build();
         
   Enviado SMS
   
-    List<SMSResponse> resps = PontalTechAPI.preparar(requisicao).enviar();
+    List<PontalTechAPI.SMSResponse> resps =
+          PontalTechAPI.preparar(requisicao).enviar();
     //Retorna uma lista dos SMSs enviados para cada numero adicionado
 
   Verificando status de Envio. *(Somente por período)*
       
-      SMSRequestCheck requestCheck = SMSRequestCheck.builder()
+      PontalTechAPI.SMSRequestCheck requestCheck =
+            PontalTechAPI.SMSRequestCheck.builder()
               .dataInicio(LocalDateTime.now().minusMinutes(5))
               .dataFim(LocalDateTime.now())
               .build();
               
-      List<SMSResponse> reports = PontalTechAPI.preparar(requestCheck)
-              .check();        
+      List<PontalTechAPI.SMSResponse> reports =
+                    PontalTechAPI.preparar(requestCheck).check();        
     
   Espeficicando usuário e senha
   
     PontalTechAPI.config(
-              SMSUserConfig.build("USUARIO", "SENHA")
+              PontalTechAPI.SMSUserConfig.build("USUARIO", "SENHA")
             )
             .prepare(req)
             .envia();
     
 #### Dúvidas 
-[by Wellton S. Barros - makotostudiodev@gmail.com](https://github.com/Cafecanudo/zenvia)
+[by Wellton S. Barros - makotostudiodev@gmail.com](https://github.com/Cafecanudo/pontaltech-api)
